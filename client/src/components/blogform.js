@@ -1,0 +1,152 @@
+import { React, useState, useEffect } from "react";
+
+
+const BlogForm = () => {
+    const [userName, setUsername] = useState("")
+    const [blogPrivacy, setBlogPrivacy] = useState("")
+    const [blogCategory, setBlogCategory] = useState("");
+    const [blogGenre, setBlogGenre] = useState("");
+    const [blogTitle, setBlogTitle] = useState("");
+    const [blogContent, setBlogContent] = useState("");
+
+    const handleSubmitBlog = async (event) => {
+        event.preventDefault();
+        
+        try {
+            const body = { blogPrivacy, blogCategory, blogGenre, blogTitle, blogContent, userName }
+            console.log(body)
+            const response = await fetch("http://localhost:3001/blogs",
+                {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(body)
+                }
+            )
+            console.log(response)
+        } catch (error) {
+            console.error(error.message)
+        }
+    }
+
+    return (
+        <div>
+            <form onSubmit={handleSubmitBlog}>
+                {/* Option for blog's category which will determine the spotify search parameter */}
+
+                <br/>   
+                <input 
+                    id="username"
+                    name="username"
+                    placeholder="Username..."
+                    value={userName}
+                    onChange={(event) => setUsername(event.target.value)}
+                />
+                <br/>
+                <br/>
+
+                <label for="blogprivacy">Blog Privacy</label>
+                <br/>
+                <select 
+                    id="blogprivacy"
+                    name="blogprivacy"
+                    value={blogPrivacy}
+                    onChange={(event) => setBlogPrivacy(event.target.value)}
+                >
+                    <option value="none">Please Select Privacy</option>
+                    <option value="publics">Public</option>
+                    <option value="private">Private</option>
+                </select>
+                <br/>
+                <br/>
+
+
+                <label for="blogcategory">Blog's Category</label>
+                <br/>
+                <select
+                    value={blogCategory}
+                    onChange={(event) => setBlogCategory(event.target.value)}
+                    name="blogcategory"
+                    id="blogcategory"
+                >
+                    <option value="none">Please Select Category</option>
+                    <option value="Artist">Artist</option>
+                    <option value="Album">Album</option>
+                    <option value="Song">Song</option>
+                </select>
+                <br/>
+                <br/>
+
+
+                <label for="bloggenre">Blog's Genre</label>
+                <br/>
+                <select
+                    name="bloggenre"
+                    id="bloggenre"
+                    value={blogGenre}
+                    onChange={(event) => setBlogGenre(event.target.value)}
+
+                >
+                    <option value="none">Please Select A Genre</option>
+                    <option value="rock">Rock</option>
+                    <option value="pop">Pop</option>
+                    <option value="hiphop">Hip Hop</option>
+                    <option value="rnb">RnB</option>
+                    <option value="country">Country</option>
+                    <option value="jazz">Jazz</option>
+                    <option value="metal">Metal</option>
+                    <option value="electronic dance music">Electronid Dance Music</option>
+                    <option value="rap">Rap</option>
+                    <option value="indie">Indie</option>
+                    <option value="reggae">Reggae</option>
+                    <option value="instrumental">Instrumental</option>
+                    <option value="soul">Soul</option>
+                    <option value="progressive">Progressive</option>
+
+
+                </select>
+                <br/>
+                <br/>
+
+
+                <label for="blogtitle">Blog Title</label>
+                <br/>
+                <input 
+                    name="blogtitle"
+                    id="blogtitle"
+                    type="text"
+                    placeholder="Blog title..."
+                    value={blogTitle}
+                    onChange={(event) => setBlogTitle(event.target.value)}
+                />
+                <br/>
+                <br/>
+
+
+                <label for="blogcontent">Blog Content</label>
+                <br/>
+                <textarea 
+                    name="blogcontent"
+                    id="blogcontent"
+                    type="textarea"
+                    placeholder="Blog content..."
+                    value={blogContent}
+                    onChange={(event) => setBlogContent(event.target.value)}
+                />
+                <br/>
+                <br/>
+
+                <input 
+                    type="submit"
+                    value="Submit"
+                />
+            </form>
+            
+        </div>
+    )
+
+
+
+}
+
+
+export default BlogForm;
