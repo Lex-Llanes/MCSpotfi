@@ -10,6 +10,8 @@ const db = require('../server/db/db-connection.js');
 const REACT_BUILD_DIR = path.join(__dirname, '..', 'client', 'build');
 const app = express();
 
+//LastFM api key
+const LastFM_Key = process.env.LASTFM_API_KEY
 
 const config = {
     authRequired: false,
@@ -49,7 +51,8 @@ app.get('/api/me', (req, res) => {
 
 
 /*ROUTE FOR GET ALL BLOGS FROM A SPECIFIC USER*/
-app.get('/bloglist', async (req, res) => {
+//Might have to use a GET request with a params
+app.post('/bloglist', async (req, res) => {
     try {
         const { userName } = req.query;
         //blogList will look in my blogs table for any blogs associated with the username
@@ -62,7 +65,7 @@ app.get('/bloglist', async (req, res) => {
 
 
 /*POST - CREATE A NEW BLOG POST*/
-app.post('/blogs', async (req, res) => {
+app.post('/userblog', async (req, res) => {
     try {
         const { blogPrivacy } = req.body;
         const { blogCategory } = req.body;
@@ -78,6 +81,38 @@ app.post('/blogs', async (req, res) => {
         console.error(error.message)
     }
 })
+
+
+
+//MEMO TO SELF: TWO METHODS SO CHECK WHICH ONE WORKS (OR WORKS BETTER) AS NOT SURE IF I HAVE TO DO A GET (WITH MULTIPLE PARAMS) OR JUST DO A POST REQUEST SO I CAN USE A BODY//
+/*POST method - for acquiring song infos*/
+app.post('/song', async (req, res) => {
+    try { 
+        const { artistName, trackName } = req.body;
+
+        const response = await fetch(`http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=LastFM_Key&artist=${artistName}&track=${trackName}}&format=json`)
+        const body = await response.json();
+
+        return res.send(body);
+    } catch (error) {
+        console.error(error.message)
+    }
+})
+/*GET method*/
+app.get('/song/:artistName/:trackName', (req, res) => {
+    try {
+    const { artistName } = req.params;
+    const { trackName } = req.params;
+
+        const response = await fetch(`http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=LastFM_Key&artist=${artistName}&track=${trackName}}&format=json`)
+        const body = await response.json();
+
+        return res.send(body);
+    } catch (error) {
+        console.error(error.message)
+    }
+})
+
 
 
 
