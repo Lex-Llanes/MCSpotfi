@@ -102,8 +102,8 @@ app.post('/song', async (req, res) => {
 /*GET method*/
 app.get('/song/:artistName/:trackName', (req, res) => {
     try {
-        const { artistName } = req.params.artistName;
-        const { trackName } = req.params.trackName;
+    const { artistName } = req.params;
+    const { trackName } = req.params;
 
         const response = await fetch(`http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=LastFM_Key&artist=${artistName}&track=${trackName}}&format=json`)
         const body = await response.json();
