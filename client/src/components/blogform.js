@@ -9,6 +9,11 @@ const BlogForm = () => {
     const [blogTitle, setBlogTitle] = useState("");
     const [blogContent, setBlogContent] = useState("");
 
+    const [artistName, setArtistName] = useState("");
+    const [trackName, setTrackName] = useState("");
+
+
+    //SUBMITS NEW BLOG
     const handleSubmitBlog = async (event) => {
         event.preventDefault();
         
@@ -26,12 +31,27 @@ const BlogForm = () => {
         } catch (error) {
             console.error(error.message)
         }
+    } 
+    
+    
+
+    //SEARCHES FOR PROPER TRACK
+    const handleTrackSearch = () => {
+        try {
+            const body = { artistName, trackName }
+
+            const response = await fetch("")
+        } catch (error) {
+            console.error(error.message)
+        }
     }
+
+
 
     return (
         <div>
             <form onSubmit={handleSubmitBlog}>
-                {/* Option for blog's category which will determine the spotify search parameter */}
+                
 
                 <br/>   
                 <input 
@@ -59,20 +79,17 @@ const BlogForm = () => {
                 <br/>
                 <br/>
 
-
-                <label for="blogcategory">Blog's Category</label>
+                {/* Option for blog's mood which will determine the blog search parameter */}
+                <label for="usermood">Your Mood</label>
                 <br/>
-                <select
+                <input
+                    id="usermood"
+                    name="usermood"
+                    placeholder="Your mood..."
                     value={blogCategory}
                     onChange={(event) => setBlogCategory(event.target.value)}
-                    name="blogcategory"
-                    id="blogcategory"
-                >
-                    <option value="none">Please Select Category</option>
-                    <option value="Artist">Artist</option>
-                    <option value="Album">Album</option>
-                    <option value="Song">Song</option>
-                </select>
+                />
+
                 <br/>
                 <br/>
 
