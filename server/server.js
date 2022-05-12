@@ -10,6 +10,15 @@ const db = require('../server/db/db-connection.js');
 const REACT_BUILD_DIR = path.join(__dirname, '..', 'client', 'build');
 const app = express();
 
+
+/************************************/
+//IMPORTS
+const { expressjwt: jwt } = require('express-jwt')
+const jwks = require('jwks-rsa')
+const axios = require('axios')
+/************************************/
+
+
 //LastFM api key
 const LastFM_Key = process.env.LASTFM_API_KEY
 
@@ -31,23 +40,71 @@ app.use(auth(config));
 app.use(bodyParser.json())
 
 
-//creates an endpoint for the route /api
-app.get('/', (req, res) => {
-    //AUTH0 - req.isAuthenticated is provided from the auth router£
-    console.log(req.oidc.isAuthenticated())
-    // res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
-    res.sendFile(path.join(REACT_BUILD_DIR, 'index.html'));
-});
+/********************************************/
+//Create a middleware using JWT
+const verifyJwt = jwt({
+    secret: jwks.expressJwtSecret({
+        cache: true,
+        ratelimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: 'https://lex-llanes.us.auth0.com/.well-known/jwks.json'
+    }),
+    audience: 'Just a unique string of words for unique purposes',
+    issuer: 'https://lex-llanes.us.auth0.com/',
+    algorithms: ['RS256']
+}).unless({ path: ['/']})
 
+//Now we can use the middleware we made
+app.use(verifyJwt);
+/********************************************/
 
-/* ROUTE FOR GETTING USER DATA */
-app.get('/api/me', (req, res) => {
-    if(req.oidc.isAuthenticated()){
-        res.json(req.oidc.user);
-    } else {
-        res.status(401).json({error: "Error in the auth0"})
-    }
+/**************************************************************************/
+app.get('/', (req,res) => {
+    res.send('Hello from index route')
 })
+
+app.get('/protected', (req, res) => {
+    //The middleware takes whatever the payload and attaches it to req.user object which we are sending to the client
+    console.log(req.user)
+    res.send(req.user)
+})
+
+app.use((req, res, next) => {
+    const error = new error('Not Found')
+    error.status = 404;
+    next(error);
+})
+
+app.use((error, req, res, next) => {
+    const status = error.status || 500
+    const message = error.message || 'Internal server error'
+    res.status(status).send(message)
+})
+/**************************************************************************/
+
+
+
+
+
+
+
+// //creates an endpoint for the route /api
+// app.get('/', (req, res) => {
+//     //AUTH0 - req.isAuthenticated is provided from the auth router£
+//     console.log(req.oidc.isAuthenticated())
+//     // res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+//     res.sendFile(path.join(REACT_BUILD_DIR, 'index.html'));
+// });
+
+
+// /* ROUTE FOR GETTING USER DATA */
+// app.get('/api/me', (req, res) => {
+//     if(req.oidc.isAuthenticated()){
+//         res.json(req.oidc.user);
+//     } else {
+//         res.status(401).json({error: "Error in the auth0"})
+//     }
+// })
 
 
 /*ROUTE FOR GET ALL BLOGS FROM A SPECIFIC USER*/
@@ -100,7 +157,7 @@ app.post('/song', async (req, res) => {
     }
 })
 /*GET method*/
-app.get('/song/:artistName/:trackName', (req, res) => {
+app.get('/song/:artistName/:trackName', async (req, res) => {
     try {
         const { artistName } = req.params.artistName;
         const { trackName } = req.params.trackName;

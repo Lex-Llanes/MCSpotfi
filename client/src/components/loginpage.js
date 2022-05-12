@@ -1,40 +1,9 @@
-import { React, useState, useEffect } from 'react'
+import React from 'react'
 
-const Login = () => {
-
-    const [user, setUser] = useState(undefined);
-
-    const loadUser = () => {
-        fetch("/api/me")
-            .then((response) => {
-                if(response.status === 200){
-                    return response.json()
-                } else {
-                    return undefined;
-                }
-            })
-            .then((user) => {
-                setUser(user)
-            })
-    }
-
-
-    useEffect(() => {
-        loadUser();
-    },[]);
-
-    return(
-        <nav>
-            <ul>
-                {!user ? (<li><a href="http://localhost:3001/login">LOGIN</a></li>) : 
-                (<li>Hello, {user.email} <a href="http://localhost:3001/logout">LOGOUT</a></li>)
-                }
-                
-                
-            </ul>
-        </nav>
-    )
+const LoginComp = () => {
+  return (
+    <div>loginpage</div>
+  )
 }
 
-
-export default Login;
+export default LoginComp;
