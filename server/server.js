@@ -148,6 +148,8 @@ app.post('/track', async (req, res) => {
         const response = await fetch(`http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${LastFM_Key}&artist=${artistName}&track=${trackName}}&format=json`)
         const data = await response.json();
 
+        console.log(artistName);
+        console.log(trackName);
         res.send(data);
     } catch (error) {
         console.error(error.message)
