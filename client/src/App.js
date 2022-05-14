@@ -9,6 +9,7 @@ import axios from "axios"
 import BlogForm from "./components/blogform"
 import CarouselComp from "./components/carousel";
 import NavigationBar from './components/navbar';
+import BlogList from './components/bloglist';
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
           authorization: `Bearer ${token}`
         }
       })
+      console.log(token)
       console.log(response.data);
     } catch (error) {
       console.log(error.message)
@@ -77,8 +79,15 @@ function App() {
 
     <h3>User is { isAuthenticated ? "Logged In" : "Not Logged In"} </h3>
     { isAuthenticated && (
-    <pre style={{ textAlign: 'start' }}>{JSON.stringify(user, null, 2)}</pre>
+    <pre style={{ textAlign: 'start' }}>{JSON.stringify(user, null, 2)}
+    <BlogForm user={user}/>
+    <BlogList />
+    </pre>
+    
     )}
+
+
+
    </div>
   )
 }
